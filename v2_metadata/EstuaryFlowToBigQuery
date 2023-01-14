@@ -2,7 +2,7 @@
   "image": "gcr.io/dataflow-templates/2023-01-03-00_rc00/pubsub-cdc-to-bigquery",
   "metadata": {
     "name": "SaaS Data to BigQuery Using Estuary Flow",
-    "description": "Streaming pipeline. Ingests SaaS data from Estuary Flow, applies transforms using a JavaScript user-defined function (UDF), and writes to a pre-existing BigQuery table as BigQuery elements. See the docs at https://estuary.dev to set up Estuary Flow.",
+    "description": "Streaming pipeline. Ingests SaaS data from Estuary Flow, applies transforms using a JavaScript user-defined function (UDF), and writes to a BigQuery table as BigQuery elements. See the docs at https://estuary.dev to set up Estuary Flow.",
     "parameters": [
       {
         "name": "inputSubscription",
