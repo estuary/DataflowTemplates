@@ -3,14 +3,20 @@
 This fork of `GoogleCloudPlatform/DataflowTemplates` includes streaming templates modified for
 reading real-time data from [Estuary Flow](https://www.estuary.dev/).
 
-The following templates are supported. Currently they can be run in Dataflow as custom templates.
+The following templates are supported. Currently they can be run in Dataflow as custom templates:
 
-* [SaaS Data to BigQuery using Estuary](v2_metadata/EstuaryFlowToBigQuery): `gs://estuary_flow_dataflow_templates/EstuaryFlowToBigQuery`
-* [SaaS Data to GCS Avro using Estuary](v1_metadata/EstuaryFlowToAvro_metadata): `gs://estuary_flow_dataflow_templates/EstuaryFlowToAvro`
-* [SaaS Data to Pub/Sub using Estuary](v1_metadata/EstuaryFlowToPubSub_metadata): `gs://estuary_flow_dataflow_templates/EstuaryFlowToPubSub`
-* [SaaS Data to MongoDB using Estuary](v2_metadata/EstuaryFlowToMongoDB): `gs://estuary_flow_dataflow_templates/EstuaryFlowToMongoDB`
-* [SaaS Data to ElasticSearch using Estuary](v2_metadata/EstuaryFlowToElasticsearch): `gs://estuary_flow_dataflow_templates/EstuaryFlowToElasticsearch`
-* [SaaS Data to Java Database Connectivity (JDBC) using Estuary](v2_metadata/EstuaryFlowToJdbc): `gs://estuary_flow_dataflow_templates/EstuaryFlowToJDBC`
+* [SaaS Data to BigQuery using Estuary](v2_metadata/EstuaryFlowToBigQuery):
+  - `gs://estuary_flow_dataflow_templates/EstuaryFlowToBigQuery`
+* [SaaS Data to GCS Avro using Estuary](v1_metadata/EstuaryFlowToAvro_metadata):
+  - `gs://estuary_flow_dataflow_templates/EstuaryFlowToAvro`
+* [SaaS Data to Pub/Sub using Estuary](v1_metadata/EstuaryFlowToPubSub_metadata):
+  - `gs://estuary_flow_dataflow_templates/EstuaryFlowToPubSub`
+* [SaaS Data to MongoDB using Estuary](v2_metadata/EstuaryFlowToMongoDB):
+  - `gs://estuary_flow_dataflow_templates/EstuaryFlowToMongoDB`
+* [SaaS Data to ElasticSearch using Estuary](v2_metadata/EstuaryFlowToElasticsearch):
+  - `gs://estuary_flow_dataflow_templates/EstuaryFlowToElasticsearch`
+* [SaaS Data to Java Database Connectivity (JDBC) using Estuary](v2_metadata/EstuaryFlowToJdbc):
+  - `gs://estuary_flow_dataflow_templates/EstuaryFlowToJDBC`
 
 # Google Cloud Dataflow Template Pipelines
 
