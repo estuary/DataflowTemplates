@@ -1,0 +1,113 @@
+{
+  "name": "SaaS Data to Avro Files Using Estuary Flow",
+  "description": "Streaming pipeline. Ingests SaaS data from Estuary Flow and outputs windowed Avro files to the specified directory. See the docs at https://estuary.dev to set up Estuary Flow.",
+  "parameters": [
+    {
+      "name": "inputTopic",
+      "label": "Materialized PubSub topic",
+      "helpText": "See https://docs.estuary.dev/reference/Connectors/materialization-connectors/google-pubsub/ for setting up a PubSub materialization in Estuary Flow. In the format of 'projects/your-project/subscriptions/your-subscription'",
+      "regexes": [
+        "^projects\\/[^\\n\\r\\/]+\\/topics\\/[^\\n\\r\\/]+$"
+      ],
+      "paramType": "PUBSUB_TOPIC"
+    },
+    {
+      "name": "outputDirectory",
+      "label": "Output directory",
+      "helpText": "The output location in Cloud Storage where Avro files will be archived. DateTime formatting is used to parse directory path for date & time formatters. Ex: gs://your-bucket/your-path",
+      "regexes": [
+        "^gs:\\/\\/[^\\n\\r]+$"
+      ],
+      "paramType": "GCS_WRITE_FOLDER"
+    },
+    {
+      "name": "outputFilenamePrefix",
+      "label": "Output Avro filename prefix",
+      "helpText": "Default value is used when not specified.",
+      "isOptional": true,
+      "regexes": [
+        "^[a-zA-Z]+$"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "outputFilenameSuffix",
+      "label": "Output Avro filename suffix",
+      "helpText": "Defaults to no suffix when not specified.",
+      "isOptional": true,
+      "regexes": [
+        "^[\\.a-zA-Z]+$"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "outputShardTemplate",
+      "label": "Output shard template",
+      "helpText": "Defines the shard template of the output file. Recommended: use the default (W-P-SS-of-NN). At runtime, 'W' is replaced with the window date range and 'P' is replaced with the pane info. Repeating sequences of the letters 'S' or 'N' are replaced with the shard number and number of shards respectively. The pipeline assumes a single file output and will produce the text of '00-of-01' by default.",
+      "isOptional": true,
+      "regexes": [
+        "^W-P-(S){1,}-of-(N){1,}$"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "avroTempDirectory",
+      "label": "Temporary Avro write directory",
+      "helpText": "Directory for temporary Avro files. Ex: gs://your-bucket/your-temp-directory",
+      "regexes": [
+        "^gs:\\/\\/[^\\n\\r]+$"
+      ],
+      "paramType": "GCS_WRITE_FOLDER"
+    },
+    {
+      "name": "yearPattern",
+      "label": "Year Pattern",
+      "helpText": "Pattern for formatting the year. Must be one or more of 'y' or 'Y'. Case makes no difference in the year. The pattern can be optionally wrapped by characters that aren't either alphanumeric or the directory ('/') character. (Default: 'YYYY')",
+      "isOptional": true,
+      "regexes": [
+        "^[^A-Za-z0-9/](y+|Y+)[^A-Za-z0-9/]$"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "monthPattern",
+      "label": "Month Pattern",
+      "helpText": "Pattern for formatting the month. Must be one or more of the 'M' character. The pattern can be optionally wrapped by characters that aren't alphanumeric or the directory ('/') character. (Default: 'MM')",
+      "isOptional": true,
+      "regexes": [
+        "^[^A-Za-z0-9/](M+)[^A-Za-z0-9/]$"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "dayPattern",
+      "label": "Day Pattern",
+      "helpText": "Pattern for formatting the day. Must be one or more of 'd' for day of month or 'D' for day of year. Case makes no difference in the year. The pattern can be optionally wrapped by characters that aren't either alphanumeric or the directory ('/') character. (Default: 'DD')",
+      "isOptional": true,
+      "regexes": [
+        "^[^A-Za-z0-9/](d+|D+)[^A-Za-z0-9/]$"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "hourPattern",
+      "label": "Hour Pattern",
+      "helpText": "Pattern for formatting the hour. Must be one or more of the 'H' character. The pattern can be optionally wrapped by characters that aren't alphanumeric or the directory ('/') character. (Default: 'HH')",
+      "isOptional": true,
+      "regexes": [
+        "^[^A-Za-z0-9/](H+)[^A-Za-z0-9/]$"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "minutePattern",
+      "label": "Minute Pattern",
+      "helpText": "Pattern for formatting the month. Must be one or more of the 'm' character. The pattern can be optionally wrapped by characters that aren't alphanumeric or the directory ('/') character. (Default: 'mm')",
+      "isOptional": true,
+      "regexes": [
+        "^[^A-Za-z0-9/](m+)[^A-Za-z0-9/]$"
+      ],
+      "paramType": "TEXT"
+    }
+  ]
+}

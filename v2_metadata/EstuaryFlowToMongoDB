@@ -1,0 +1,143 @@
+{
+  "image": "gcr.io/dataflow-templates/2023-01-03-00_rc00/pubsub-to-mongodb",
+  "metadata": {
+    "name": "SaaS Data to MongoDB Using Estuary Flow",
+    "description": "Streaming pipeline that ingests SaaS data from Estuary Flow, transforms it using a JavaScript user-defined function (UDF), and writes to a MongoDB as documents. See the docs at https://estuary.dev to set up Estuary Flow.",
+    "parameters": [
+      {
+        "name": "inputSubscription",
+        "label": "Subscription for materialized PubSub topic",
+        "helpText": "See https://docs.estuary.dev/reference/Connectors/materialization-connectors/google-pubsub/ for setting up a PubSub materialization in Estuary Flow. In the format of 'projects/your-project/subscriptions/your-subscription'",
+        "regexes": [
+          "^projects\\/[^\\n\\r\\/]+\\/subscriptions\\/[^\\n\\r\\/]+$"
+        ],
+        "paramType": "PUBSUB_SUBSCRIPTION"
+      },
+      {
+        "name": "mongoDBUri",
+        "label": "MongoDB Connection URI",
+        "helpText": "List of Mongo DB nodes separated by comma. ex: 192.285.234.12:27017,192.287.123.11:27017",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "database",
+        "label": "MongoDB",
+        "helpText": "Database in MongoDB to store the collection. ex: my-db.",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "collection",
+        "label": "MongoDB collection",
+        "helpText": "Name of the collection inside MongoDB database. ex: my-collection.",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "deadletterTable",
+        "label": "BigQuery DeadLetter Table",
+        "helpText": "Messages failed to reach the output table for all kind of reasons (e.g., mismatched schema, malformed json) are written to this table. It should be in the format of \"your-project:your-dataset.your-table-name\". If it doesn't exist, it will be created during pipeline execution. If not specified, \"outputTableSpec_error_records\" is used instead.",
+        "regexes": [
+          ".+:.+\\..+"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "javascriptTextTransformGcsPath",
+        "label": "Cloud Storage location of your JavaScript UDF",
+        "helpText": "The full URL of your .js file. Example: gs://your-bucket/your-function.js",
+        "isOptional": true,
+        "regexes": [
+          "^gs:\\/\\/[^\\n\\r]+$"
+        ],
+        "paramType": "GCS_READ_FILE"
+      },
+      {
+        "name": "javascriptTextTransformFunctionName",
+        "label": "The name of the JavaScript function you wish to call as your UDF",
+        "helpText": "The function name should only contain letters, digits and underscores. Example: 'transform' or 'transform_udf1'.",
+        "isOptional": true,
+        "regexes": [
+          "[a-zA-Z0-9_]+"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "batchSize",
+        "label": "Batch Size",
+        "helpText": "Batch Size used for batch insertion of documents into mongodb. Default: 1000",
+        "isOptional": true,
+        "regexes": [
+          "^[0-9]+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "batchSizeBytes",
+        "label": "Batch Size in Bytes",
+        "helpText": "Batch Size in bytes used for batch insertion of documents into MongoDB. Default: 5242880",
+        "isOptional": true,
+        "regexes": [
+          "^[0-9]+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "maxConnectionIdleTime",
+        "label": "Max Connection idle time",
+        "helpText": "Maximum idle time allowed in seconds before connection time out occurs. Default: 60000",
+        "isOptional": true,
+        "regexes": [
+          "^[0-9]+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "sslEnabled",
+        "label": "SSL Enabled",
+        "helpText": "Indicates whether connection to MongoDB is ssl enabled. Default: true",
+        "regexes": [
+          "^(true|false)$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "ignoreSSLCertificate",
+        "label": "Ignore SSL Certificate",
+        "helpText": "Indicates whether SSL certificate should be ignored. Default: true",
+        "isOptional": true,
+        "regexes": [
+          "^(true|false)$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "withOrdered",
+        "label": "withOrdered",
+        "helpText": "Enables ordered bulk insertions into MongoDB. Default: true",
+        "isOptional": true,
+        "regexes": [
+          "^(true|false)$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "withSSLInvalidHostNameAllowed",
+        "label": "withSSLInvalidHostNameAllowed",
+        "helpText": "Indicates whether invalid host name is allowed for ssl connection. Default: true",
+        "isOptional": true,
+        "regexes": [
+          "^(true|false)$"
+        ],
+        "paramType": "TEXT"
+      }
+    ]
+  },
+  "sdkInfo": {
+    "language": "JAVA"
+  },
+  "defaultEnvironment": {
+    "additionalUserLabels": {
+      "goog-dataflow-provided-template-type": "flex",
+      "goog-dataflow-provided-template-name": "cloud_pubsub_to_mongodb"
+    }
+  }
+}

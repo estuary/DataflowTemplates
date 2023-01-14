@@ -1,0 +1,141 @@
+{
+  "image": "gcr.io/dataflow-templates/2023-01-03-00_rc00/pubsub-cdc-to-bigquery",
+  "metadata": {
+    "name": "SaaS Data to BigQuery Using Estuary Flow",
+    "description": "Streaming pipeline. Ingests SaaS data from Estuary Flow, applies transforms using a JavaScript user-defined function (UDF), and writes to a pre-existing BigQuery table as BigQuery elements. See the docs at https://estuary.dev to set up Estuary Flow.",
+    "parameters": [
+      {
+        "name": "inputSubscription",
+        "label": "Subscription for materialized PubSub topic",
+        "helpText": "See https://docs.estuary.dev/reference/Connectors/materialization-connectors/google-pubsub/ for setting up a PubSub materialization in Estuary Flow. In the format of 'projects/your-project/subscriptions/your-subscription'",
+        "regexes": [
+          "^projects\\/[^\\n\\r\\/]+\\/subscriptions\\/[^\\n\\r\\/]+$"
+        ],
+        "paramType": "PUBSUB_SUBSCRIPTION"
+      },
+      {
+        "name": "schemaFilePath",
+        "label": "Cloud Storage file with BigQuery schema fields to be used in DDL",
+        "helpText": "This is the file location that contains the table definition to be used when creating the table in BigQuery. If left blank the table will get created with generic string typing.",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "outputDatasetTemplate",
+        "label": "BigQuery Dataset Name or Template: dataset_name or {column_name}",
+        "helpText": "The name for the dataset to contain the replica table.",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "outputTableNameTemplate",
+        "label": "BigQuery Table Name or Template: table_name or {column_name}",
+        "helpText": "The location of the BigQuery table to write the output to. If a table does not already exist one will be created automatically.",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "outputDeadletterTable",
+        "label": "Dead Letter Table Name: {PROJECT_ID}:{DATASET}.dlq_{TABLE}",
+        "helpText": "Messages failed to reach the output table for all kind of reasons (e.g., mismatched schema, malformed json) are written to this table. If it doesn't exist, it will be created during pipeline execution. If not specified, \"outputTableSpec_error_records\" is used instead. Ex: your-project:your-dataset.your-table-name",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "pythonTextTransformGcsPath",
+        "label": "Gcs path to python UDF source",
+        "helpText": "The Cloud Storage path pattern for the Python code containing your user-defined functions. Ex: gs://your-bucket/your-transforms/*.py",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "pythonTextTransformFunctionName",
+        "label": "UDF Python Function Name",
+        "helpText": "The name of the function to call from your JavaScript file. Use only letters, digits, and underscores. Ex: transform_udf1",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "javascriptTextTransformGcsPath",
+        "label": "Gcs path to javascript UDF source",
+        "helpText": "The Cloud Storage path pattern for the JavaScript code containing your user-defined functions. Ex: gs://your-bucket/your-transforms/*.js",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "javascriptTextTransformFunctionName",
+        "label": "UDF Javascript Function Name",
+        "helpText": "The name of the function to call from your JavaScript file. Use only letters, digits, and underscores. Ex: transform_udf1",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "deadLetterQueueDirectory",
+        "label": "Dead Letter Queue Directory",
+        "helpText": "The name of the directory on Cloud Storage you want to write dead letters messages to",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "numThreads",
+        "label": "Thread Number",
+        "helpText": "The number of parallel threads you want to split your data into",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "maxStreamingBatchSize",
+        "label": "Max Streaming Batch Size",
+        "helpText": "The maximum byte size of a single streaming insert to BigQuery.",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "useStorageWriteApi",
+        "label": "Use BigQuery Storage Write API",
+        "helpText": "If enabled (set to true) the pipeline will use Storage Write API when writing the data to BigQuery (see https://cloud.google.com/blog/products/data-analytics/streaming-data-into-bigquery-using-storage-write-api). When this is enabled \"Number of streams for BigQuery Storage Write API\" and \"Triggering frequency in seconds for BigQuery Storage Write API\" must be provided.",
+        "isOptional": true,
+        "regexes": [
+          "^(true|false)$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "useStorageWriteApiAtLeastOnce",
+        "label": "Use at at-least-once semantics in BigQuery Storage Write API",
+        "helpText": "This parameter takes effect only if \"Use BigQuery Storage Write API\" is enabled. If enabled the at-least-once semantics will be used for Storage Write API, otherwise exactly-once semantics will be used.",
+        "isOptional": true,
+        "regexes": [
+          "^(true|false)$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "numStorageWriteApiStreams",
+        "label": "Number of streams for BigQuery Storage Write API",
+        "helpText": "Number of streams defines the parallelism of the BigQueryIO\u2019s Write transform and roughly corresponds to the number of Storage Write API\u2019s streams which will be used by the pipeline. See https://cloud.google.com/blog/products/data-analytics/streaming-data-into-bigquery-using-storage-write-api for the recommended values.",
+        "isOptional": true,
+        "regexes": [
+          "^[1-9][0-9]*$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "storageWriteApiTriggeringFrequencySec",
+        "label": "Triggering frequency in seconds for BigQuery Storage Write API",
+        "helpText": "Triggering frequency will determine how soon the data will be visible for querying in BigQuery. See https://cloud.google.com/blog/products/data-analytics/streaming-data-into-bigquery-using-storage-write-api for the recommended values.",
+        "isOptional": true,
+        "regexes": [
+          "^[1-9][0-9]*$"
+        ],
+        "paramType": "TEXT"
+      }
+    ]
+  },
+  "sdkInfo": {
+    "language": "JAVA"
+  },
+  "defaultEnvironment": {
+    "additionalUserLabels": {
+      "goog-dataflow-provided-template-type": "flex",
+      "goog-dataflow-provided-template-name": "pubsub_cdc_to_bigquery"
+    }
+  }
+}

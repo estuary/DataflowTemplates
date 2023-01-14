@@ -1,0 +1,232 @@
+{
+  "image": "gcr.io/dataflow-templates/2023-01-03-00_rc00/pubsub-to-elasticsearch",
+  "metadata": {
+    "name": "SaaS Data to Elasticsearch Using Estuary Flow",
+    "description": "A pipeline to ingest SaaS data from Estuary Flow and write it into an Elasticsearch instance as json documents with optional intermediate transformations using Javascript Udf. See the docs at https://estuary.dev to set up Estuary Flow.",
+    "parameters": [
+      {
+        "name": "inputSubscription",
+        "label": "Subscription for materialized PubSub topic.",
+        "helpText": "See https://docs.estuary.dev/reference/Connectors/materialization-connectors/google-pubsub/ for setting up a PubSub materialization in Estuary Flow. In the format of 'projects/your-project/subscriptions/your-subscription'",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "connectionUrl",
+        "label": "Elasticsearch URL or CloudID if using Elastic Cloud",
+        "helpText": "Elasticsearch URL in the format https://hostname:[port] or specify CloudID if using Elastic Cloud",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "errorOutputTopic",
+        "label": "Error output topic in Pub/Sub",
+        "helpText": "Error output topic in Pub/Sub for failed inserts",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "apiKey",
+        "label": "Base64 Encoded API Key for access without requiring basic authentication",
+        "helpText": "Base64 Encoded API Key for access without requiring basic authentication",
+        "paramType": "TEXT"
+      },
+      {
+        "name": "elasticsearchUsername",
+        "label": "Username for Elasticsearch endpoint",
+        "helpText": "Username for Elasticsearch endpoint",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "elasticsearchPassword",
+        "label": "Password for Elasticsearch endpoint",
+        "helpText": "Password for Elasticsearch endpoint",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "dataset",
+        "label": "The type of logs sent via Pub/Sub for which we have out of the box dashboard. Known log types values are audit, vpcflow, and firewall. If no known log type is detected, we default to 'pubsub'",
+        "helpText": "The type of logs sent via Pub/Sub for which we have out of the box dashboard. Known log types values are audit, vpcflow, and firewall. If no known log type is detected, we default to 'pubsub'",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "namespace",
+        "label": "The namespace for dataset. Default is default",
+        "helpText": "The namespace for dataset. Default is default",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "javascriptTextTransformGcsPath",
+        "label": "Cloud Storage location of your JavaScript UDF",
+        "helpText": "The full URL of your .js file. Example: gs://your-bucket/your-function.js",
+        "isOptional": true,
+        "regexes": [
+          "^gs:\\/\\/[^\\n\\r]+$"
+        ],
+        "paramType": "GCS_READ_FILE"
+      },
+      {
+        "name": "javascriptTextTransformFunctionName",
+        "label": "The name of the JavaScript function you wish to call as your UDF",
+        "helpText": "The function name should only contain letters, digits and underscores. Example: 'transform' or 'transform_udf1'.",
+        "isOptional": true,
+        "regexes": [
+          "[a-zA-Z0-9_]+"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "batchSize",
+        "label": "Batch Size",
+        "helpText": "Batch Size used for batch insertion of messages into elasticsearch. Default: 1000",
+        "isOptional": true,
+        "regexes": [
+          "^[1-9][0-9]*$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "batchSizeBytes",
+        "label": "Batch Size in Bytes",
+        "helpText": "Batch Size in bytes used for batch insertion of messages into elasticsearch. Default: 5242880",
+        "isOptional": true,
+        "regexes": [
+          "^[1-9][0-9]*$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "maxRetryAttempts",
+        "label": "Max retry attempts.",
+        "helpText": "Max retry attempts, must be > 0. Default: no retries",
+        "isOptional": true,
+        "regexes": [
+          "^[1-9][0-9]*$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "maxRetryDuration",
+        "label": "Max retry duration.",
+        "helpText": "Max retry duration in milliseconds, must be > 0. Default: no retries",
+        "isOptional": true,
+        "regexes": [
+          "^[1-9][0-9]*$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "propertyAsIndex",
+        "label": "Document property to specify _index metadata",
+        "helpText": "A property in the document being indexed whose value will specify _index metadata to be included with document in bulk request (takes precedence over an _index UDF).",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "propertyAsId",
+        "label": "Document property to specify _id metadata",
+        "helpText": "A property in the document being indexed whose value will specify _id metadata to be included with document in bulk request (takes precedence over an _id UDF).",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "javaScriptIndexFnGcsPath",
+        "label": "Cloud Storage path to JavaScript UDF source for _index metadata",
+        "helpText": "Cloud Storage path to JavaScript UDF source for function that will specify _index metadata to be included with document in bulk request.",
+        "isOptional": true,
+        "regexes": [
+          "^gs:\\/\\/[^\\n\\r]+$"
+        ],
+        "paramType": "GCS_READ_FILE"
+      },
+      {
+        "name": "javaScriptIndexFnName",
+        "label": "UDF JavaScript Function Name for _index metadata",
+        "helpText": "UDF JavaScript Function Name for function that will specify _index metadata to be included with document in bulk request",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "javaScriptIdFnGcsPath",
+        "label": "Cloud Storage path to JavaScript UDF source for _id metadata",
+        "helpText": "Cloud Storage path to JavaScript UDF source for function that will specify _id metadata to be included with document in bulk request.",
+        "isOptional": true,
+        "regexes": [
+          "^gs:\\/\\/[^\\n\\r]+$"
+        ],
+        "paramType": "GCS_READ_FILE"
+      },
+      {
+        "name": "javaScriptIdFnName",
+        "label": "UDF JavaScript Function Name for _id metadata",
+        "helpText": "UDF JavaScript Function Name for function that will specify _id metadata to be included with document in bulk request.",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "javaScriptTypeFnGcsPath",
+        "label": "Cloud Storage path to JavaScript UDF source for _type metadata",
+        "helpText": "Cloud Storage path to JavaScript UDF source for function that will specify _type metadata to be included with document in bulk request.",
+        "isOptional": true,
+        "regexes": [
+          "^gs:\\/\\/[^\\n\\r]+$"
+        ],
+        "paramType": "GCS_READ_FILE"
+      },
+      {
+        "name": "javaScriptTypeFnName",
+        "label": "UDF JavaScript Function Name for _type metadata",
+        "helpText": "UDF JavaScript Function Name for function that will specify _type metadata to be included with document in bulk request",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "javaScriptIsDeleteFnGcsPath",
+        "label": "Cloud Storage path to JavaScript UDF source for isDelete function",
+        "helpText": "Cloud Storage path to JavaScript UDF source for function that will determine if document should be deleted rather than inserted or updated, function should return string value \"true\" or \"false\".",
+        "isOptional": true,
+        "regexes": [
+          "^gs:\\/\\/[^\\n\\r]+$"
+        ],
+        "paramType": "GCS_READ_FILE"
+      },
+      {
+        "name": "javaScriptIsDeleteFnName",
+        "label": "UDF JavaScript Function Name for isDelete",
+        "helpText": "UDF JavaScript Function Name for function that will determine if document should be deleted rather than inserted or updated, function should return string value \"true\" or \"false\".",
+        "isOptional": true,
+        "paramType": "TEXT"
+      },
+      {
+        "name": "usePartialUpdate",
+        "label": "Use partial updates",
+        "helpText": "Whether to use partial updates (update rather than create or index, allowing partial docs) with Elasticsearch requests. Default: false.",
+        "isOptional": true,
+        "regexes": [
+          "^(true|false)$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "bulkInsertMethod",
+        "label": "Build insert method",
+        "helpText": "Whether to use INDEX (index, allows upserts) or CREATE (create, errors on duplicate _id) with Elasticsearch bulk requests. Default: CREATE.",
+        "isOptional": true,
+        "regexes": [
+          "^(INDEX|CREATE)$"
+        ],
+        "paramType": "TEXT"
+      }
+    ]
+  },
+  "sdkInfo": {
+    "language": "JAVA"
+  },
+  "defaultEnvironment": {
+    "additionalUserLabels": {
+      "goog-dataflow-provided-template-name": "pubsub_to_elasticsearch",
+      "goog-dataflow-provided-template-type": "flex"
+    }
+  }
+}

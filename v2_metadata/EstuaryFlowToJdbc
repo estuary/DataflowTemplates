@@ -1,0 +1,122 @@
+{
+  "image": "gcr.io/dataflow-templates/2023-01-03-00_rc00/pubsub-to-jdbc",
+  "metadata": {
+    "name": "SaaS Data to JDBC Using Estuary Flow",
+    "description": "A streaming pipeline which ingests SaaS data from Estuary Flow and writes to a JDBC table. See the docs at https://estuary.dev to set up Estuary Flow. JDBC connection string, user name and password can be passed in directly as plaintext or encrypted using the Google Cloud KMS API. If the parameter KMSEncryptionKey is specified, connectionUrl, username, and password should be all in encrypted format. A sample curl command for the KMS API encrypt endpoint: curl -s -X POST \"https://cloudkms.googleapis.com/v1/projects/your-project/locations/your-path/keyRings/your-keyring/cryptoKeys/your-key:encrypt\"  -d \"{\\\"plaintext\\\":\\\"PasteBase64EncodedString\\\"}\"  -H \"Authorization:Bearer $(gcloud auth application-default print-access-token)\"  -H \"Content-Type:application/json\"",
+    "parameters": [
+      {
+        "name": "driverClassName",
+        "label": "JDBC driver class name.",
+        "helpText": "JDBC driver class name. E.g. com.mysql.jdbc.Driver",
+        "regexes": [
+          "^.+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "connectionUrl",
+        "label": "JDBC connection URL string. Connection string can be passed in as plaintext or as a base64 encoded string encrypted by Google Cloud KMS.",
+        "helpText": "Url connection string to connect to the JDBC source. E.g. jdbc:mysql://some-host:3306/sampledb",
+        "regexes": [
+          "(^jdbc:[a-zA-Z0-9/:@.?_+!*=$&-;]+$)|(^([A-Za-z0-9+/]{4}){1,}([A-Za-z0-9+/]{0,3})={0,3})"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "username",
+        "label": "JDBC connection username. User name can be passed in as plaintext or as a base64 encoded string encrypted by Google Cloud KMS.",
+        "helpText": "User name to be used for the JDBC connection.",
+        "isOptional": true,
+        "regexes": [
+          "^.+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "password",
+        "label": "JDBC connection password. Password can be passed in as plaintext or as a base64 encoded string encrypted by Google Cloud KMS.",
+        "helpText": "Password to be used for the JDBC connection.",
+        "isOptional": true,
+        "regexes": [
+          "^.+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "driverJars",
+        "label": "Cloud Storage paths for JDBC drivers",
+        "helpText": "Comma separate Cloud Storage paths for JDBC drivers. E.g. gs://your-bucket/driver_jar1.jar,gs://your-bucket/driver_jar2.jar",
+        "regexes": [
+          "^.+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "connectionProperties",
+        "label": "JDBC connection property string.",
+        "helpText": "Properties string to use for the JDBC connection. Format of the string must be [propertyName=property;]*. Example: unicode=true;characterEncoding=UTF-8",
+        "isOptional": true,
+        "regexes": [
+          "^[a-zA-Z0-9_;!*&=@#-:\\/]+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "statement",
+        "label": "Statement which will be executed against the database. The statement must specify the column names of the table in any order. Only the values of the specified column names will be read from the json and added to the statement.",
+        "helpText": "SQL statement which will be executed to write to the database. For example: INSERT INTO tableName (column1, column2) VALUES (?,?)",
+        "regexes": [
+          "^.+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "inputSubscription",
+        "label": "Subscription for materialized PubSub topic. The keys in the json strings must match the column names of the table. ",
+        "helpText": "See https://docs.estuary.dev/reference/Connectors/materialization-connectors/google-pubsub/ for setting up a PubSub materialization in Estuary Flow. In the format of 'projects/your-project/subscriptions/your-subscription'",
+        "regexes": [
+          "^projects\\/[^\\n\\r\\/]+\\/subscriptions\\/[^\\n\\r\\/]+$"
+        ],
+        "paramType": "PUBSUB_SUBSCRIPTION"
+      },
+      {
+        "name": "outputDeadletterTopic",
+        "label": "Output deadletter Pub/Sub topic",
+        "helpText": "The Pub/Sub topic to forward undeliverable messages. The name should be in the format of projects/your-project-id/topics/your-topic-name.",
+        "regexes": [
+          "^projects\\/[^\\n\\r\\/]+\\/topics\\/[^\\n\\r\\/]+$"
+        ],
+        "paramType": "PUBSUB_TOPIC"
+      },
+      {
+        "name": "KMSEncryptionKey",
+        "label": "Google Cloud KMS key",
+        "helpText": "Example: projects/your-project/locations/global/keyRings/test/cryptoKeys/quickstart. If this parameter is provided, password, user name and connection string should all be passed in encrypted. Encrypt parameters using the KMS API encrypt endpoint. See: https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings.cryptoKeys/encrypt",
+        "isOptional": true,
+        "regexes": [
+          "^projects\\/[^\\n\\r\\/]+\\/locations\\/[^\\n\\r\\/]+\\/keyRings\\/[^\\n\\r\\/]+\\/cryptoKeys\\/[^\\n\\r\\/]+$"
+        ],
+        "paramType": "TEXT"
+      },
+      {
+        "name": "extraFilesToStage",
+        "label": "Extra files to stage in the workers",
+        "helpText": "Comma separated Cloud Storage paths or Secret Manager secrets for files to stage in the worker. These files will be saved under the `/extra_files` directory in each worker. E.g. gs://your-bucket/file.txt,projects/project-id/secrets/secret-id/versions/version-id",
+        "isOptional": true,
+        "regexes": [
+          "^((gs:\\/\\/[^\\n\\r,]+|projects\\/[^\\n\\r\\/]+\\/secrets\\/[^\\n\\r\\/]+\\/versions\\/[^\\n\\r\\/]+),)*(gs:\\/\\/[^\\n\\r,]+|projects\\/[^\\n\\r\\/]+\\/secrets\\/[^\\n\\r\\/]+\\/versions\\/[^\\n\\r\\/]+)$"
+        ],
+        "paramType": "TEXT"
+      }
+    ]
+  },
+  "sdkInfo": {
+    "language": "JAVA"
+  },
+  "defaultEnvironment": {
+    "additionalUserLabels": {
+      "goog-dataflow-provided-template-type": "flex",
+      "goog-dataflow-provided-template-name": "pubsub_to_jdbc"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "SaaS Data to BigQuery Using Estuary Flow",
+  "description": "Streaming pipeline. Ingests SaaS data from Estuary Flow, applies transforms using a JavaScript user-defined function (UDF), and writes to a pre-existing BigQuery table as BigQuery elements. See the docs at https://estuary.dev to set up Estuary Flow.",
+  "parameters": [
+    {
+      "name": "inputSubscription",
+      "label": "Subscription for materialized PubSub topic",
+      "helpText": "See https://docs.estuary.dev/reference/Connectors/materialization-connectors/google-pubsub/ for setting up a PubSub materialization in Estuary Flow. In the format of 'projects/your-project/subscriptions/your-subscription'",
+      "regexes": [
+        "^projects\\/[^\\n\\r\\/]+\\/subscriptions\\/[^\\n\\r\\/]+$"
+      ],
+      "paramType": "PUBSUB_SUBSCRIPTION"
+    },
+    {
+      "name": "javascriptTextTransformGcsPath",
+      "label": "Cloud Storage location of your JavaScript UDF",
+      "helpText": "The full URL of your .js file. Example: gs://your-bucket/your-function.js",
+      "isOptional": true,
+      "regexes": [
+        "^gs:\\/\\/[^\\n\\r]+$"
+      ],
+      "paramType": "GCS_READ_FILE"
+    },
+    {
+      "name": "javascriptTextTransformFunctionName",
+      "label": "The name of the JavaScript function you wish to call as your UDF",
+      "helpText": "The function name should only contain letters, digits and underscores. Example: 'transform' or 'transform_udf1'.",
+      "isOptional": true,
+      "regexes": [
+        "[a-zA-Z0-9_]+"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "outputTableSpec",
+      "label": "BigQuery output table",
+      "helpText": "BigQuery table location to write the output to. The table\u2019s schema must match the Flow collection schema. Ex: your-project:your-dataset.your-table-name",
+      "regexes": [
+        ".+:.+\\..+"
+      ],
+      "paramType": "TEXT"
+    },
+    {
+      "name": "outputDeadletterTable",
+      "label": "Table for messages failed to reach the output table(aka. Deadletter table)",
+      "helpText": "Messages failed to reach the output table for all kind of reasons (e.g., mismatched schema, malformed json) are written to this table. It should be in the format of \"your-project:your-dataset.your-table-name\". If it doesn't exist, it will be created during pipeline execution. If not specified, \"outputTableSpec_error_records\" is used instead.",
+      "isOptional": true,
+      "regexes": [
+        ".+:.+\\..+"
+      ],
+      "paramType": "TEXT"
+    }
+  ]
+}
